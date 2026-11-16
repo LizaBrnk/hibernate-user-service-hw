@@ -20,17 +20,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User login(String email, String password) throws AuthenticationException {
         try {
             Optional<User> userFromDb = userService.findByEmail(email);
-            if (userFromDb.isPresent()) {
-                User user = userFromDb.get();
-                String hashedPass = HashUtil.hashPassword(password, user.getSalt());
-                if (user.getPassword().equals(hashedPass)) {
-                    return user;
-                }
+
+            if (userFromDb.isEmpty()
+                    || !userFromDb.get().getPassword().equals(
+                    HashUtil.hashPassword(password, userFromDb.get().getSalt()))) {
+                throw new AuthenticationException("Invalid email or password");
             }
+
+            return userFromDb.get();
         } catch (NoSuchAlgorithmException e) {
-            throw new AuthenticationException("Can`t log in", e);
+            throw new AuthenticationException("Can't log in", e);
         }
-        throw new AuthenticationException("Invalid email or password");
     }
 
     @Override
