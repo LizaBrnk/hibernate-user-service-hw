@@ -8,6 +8,9 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class HashUtil {
+    private HashUtil() {
+    }
+
     public static String generateSalt() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] salt = new byte[16];

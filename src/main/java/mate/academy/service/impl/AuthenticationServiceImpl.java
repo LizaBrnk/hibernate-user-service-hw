@@ -35,22 +35,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User register(String email, String password) throws RegistrationException {
-        User user = null;
-        try {
-            Optional<User> existingUser = userService.findByEmail(email);
-            if (existingUser.isPresent()) {
-                throw new RegistrationException("User already exists");
-            }
-            user = new User();
-            user.setEmail(email);
-            String salt = HashUtil.generateSalt();
-            String hashedPassword = HashUtil.hashPassword(password, salt);
-            user.setSalt(salt);
-            user.setPassword(hashedPassword);
-            userService.add(user);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RegistrationException("Can`t register user", e);
+        Optional<User> existingUser = userService.findByEmail(email);
+        if (existingUser.isPresent()) {
+            throw new RegistrationException("User already exists");
         }
-        return user;
+
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+
+        return userService.add(user);
     }
 }
